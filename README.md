@@ -21,7 +21,7 @@ Here is a step by step process to download and run the image:
 1. **Pull the Docker Image**
    Retrieve the latest version of the image by running:
    ```shell
-   docker pull ocddev/datalake-misp-integration
+   docker pull ocddev/datalake2misp:3.0.0
    ```
 
 2. **Configure Environment Variables**
@@ -44,7 +44,7 @@ Here is a step by step process to download and run the image:
 4. **Run the Container**
    Start the connector using the following command:
    ```shell
-   docker run --env-file .env -v /path/to/queries.json:/code/queries.json ocddev/datalake-misp-integration
+   docker run --env-file .env -v ./queries.json:/code/queries.json ocddev/datalake2misp:3.0.0
    ```
 
 ## Stopping the container
