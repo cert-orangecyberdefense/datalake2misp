@@ -34,106 +34,113 @@ To ingest data into your MISP instance, you need an API Key. Here is how to crea
 The connector will run inside of a Docker container. To set it up, we first need to retrieve both the connector's Docker image and the connector's repository.
 
 ### 1. **Pull the Docker Image**
-   
-   Pull the latest Docker image with:
-   ```shell
-   docker pull ocddev/datalake-misp-integration
-   ```
+
+Retrieve [this connector's Docker image from Docker Hub](https://hub.docker.com/r/ocddev/datalake2misp) by running:
+```shell
+docker pull ocddev/datalake2misp:$VERSION
+```
+
+_Replace `$VERSION` with the latest version available._
 
 ### 2. **Pull the Repository**
-   
-   This repository contains the connector code and configuration.
-   Navigate to the directory where you want to clone the repository and run:
-   ```shell
-   git clone https://github.com/cert-orangecyberdefense/datalake_misp_integration.git
-   ```
+
+This repository contains the connector code and configuration.
+Navigate to the directory where you want to clone the repository and run:
+```shell
+git clone https://github.com/cert-orangecyberdefense/datalake2misp.git
+```
 
 
 ### 3. **Configure Environment Variables from the repository**
-   
-   Inside the datalake_misp_integration folder you just pulled, copy the environment template with:
-   ```shell
-   cp template.env .env
-   ```
-   Edit the `.env` file and fill in the variables. The minimal information required is summarized in the table below
 
-   | **Variable**                      | **Description**                                                               |
-   | --------------------------------- | ----------------------------------------------------------------------------- |
-   | `OCD_DTL_USERNAME`                | Datalake account username                                                     |
-   | `OCD_DTL_PASSWORD`                | Datalake account password                                                     |
-   | `OCD_DTL_API_ENV`                 | Datalake environment to query: `prod` (default) or `preprod`                  |
-   | `OCD_DTL_MISP_API_KEY`            | API token for your MISP user account                                          |
-   | `OCD_DTL_MISP_HOST`               | URL of the MISP instance (must include `https` unless using local test setup) |
-   | `OCD_DTL_MISP_USE_SSL`            | Enable/disable SSL verification (`true` or `false`)                           |
-   | `OCD_DTL_QUOTA_TIME`              | Time window in seconds for rate-limiting quota                                |
-   | `OCD_DTL_REQUESTS_PER_QUOTA_TIME` | Maximum number of API requests within the quota window                        |
-   | `OCD_DTL_MISP_MAX_RESULT`         | Maximum number of Indicator Of Compromise (IOC) to transfer per execution       |
-   | `OCD_DTL_MISP_WORKER`             | Number of parallel worker processes                                           |
-   | `OCD_DTL_QUERY_CONFIG_PATH`       | Path to the query config file inside the container                            |
+Inside the datalake_misp_integration folder you just pulled, copy the environment template with:
+```shell
+cp template.env .env
+```
+Edit the `.env` file and fill in the variables. The minimal information required is summarized in the table below
 
-   A full `.env` should look like this:
+| **Variable**                      | **Description**                                                               |
+| --------------------------------- | ----------------------------------------------------------------------------- |
+| `OCD_DTL_USERNAME`                | Datalake account username                                                     |
+| `OCD_DTL_PASSWORD`                | Datalake account password                                                     |
+| `OCD_DTL_API_ENV`                 | Datalake environment to query: `prod` (default) or `preprod`                  |
+| `OCD_DTL_MISP_API_KEY`            | API token for your MISP user account                                          |
+| `OCD_DTL_MISP_HOST`               | URL of the MISP instance (must include `https` unless using local test setup) |
+| `OCD_DTL_MISP_USE_SSL`            | Enable/disable SSL verification (`true` or `false`)                           |
+| `OCD_DTL_QUOTA_TIME`              | Time window in seconds for rate-limiting quota                                |
+| `OCD_DTL_REQUESTS_PER_QUOTA_TIME` | Maximum number of API requests within the quota window                        |
+| `OCD_DTL_MISP_MAX_RESULT`         | Maximum number of Indicator Of Compromise (IOC) to transfer per execution       |
+| `OCD_DTL_MISP_WORKER`             | Number of parallel worker processes                                           |
+| `OCD_DTL_QUERY_CONFIG_PATH`       | Path to the query config file inside the container                            |
 
-   ```env
-   OCD_DTL_USERNAME=cti-ops+demo@orangecyberdefense.com
-   OCD_DTL_PASSWORD=demo_password
-   OCD_DTL_QUOTA_TIME=10
-   OCD_DTL_REQUESTS_PER_QUOTA_TIME=10
-   OCD_DTL_API_ENV=prod
-   OCD_DTL_MISP_MAX_RESULT=1000
-   OCD_DTL_MISP_API_KEY=xx8IEcacmJtrzePGGhGG2V6TXthJsDfFH1CbcQ6D
-   OCD_DTL_MISP_HOST=https://orangecyberdefense.com/demo/misp_instance
-   OCD_DTL_MISP_USE_SSL=true
-   OCD_DTL_MISP_WORKER=4
-   OCD_DTL_QUERY_CONFIG_PATH=/code/queries.json
-   ```
+A full `.env` should look like this:
+
+```env
+OCD_DTL_USERNAME=changeme@mail.example.com
+OCD_DTL_PASSWORD=changeme
+OCD_DTL_QUOTA_TIME=10
+OCD_DTL_REQUESTS_PER_QUOTA_TIME=10
+OCD_DTL_API_ENV=prod
+OCD_DTL_MISP_MAX_RESULT=1000
+OCD_DTL_MISP_API_KEY=changeme
+OCD_DTL_MISP_HOST=https://changeme.example.com
+OCD_DTL_MISP_USE_SSL=true
+OCD_DTL_MISP_WORKER=4
+OCD_DTL_QUERY_CONFIG_PATH=/code/queries.json
+```
+
+_Replace every occurrence of `changeme` above with the right value for your environment._
 
 ### 4. **Configure Queries**
-   
-   This step determines which IOCs will be transferred from Datalake to MISP. For our example, let's import IPs from peerpressure that have a malware score greater than 80. On Datalake's web interface, we input the following filters:
 
-   <p style="text-align:center"><img src="./media/Search.png" alt="image" width="1200"/></p>
+This step determines which IOCs will be transferred from Datalake to MISP. For our example, let's import IPs from our `peerpressure` source that have a malware score greater than 80. On Datalake's web interface, we input the following filters:
 
-   With this search, the associated query hash is shown in the url:
+<p style="text-align:center"><img src="./media/Search.png" alt="image" width="1200"/></p>
 
-   ```url
-   https://datalake.cert.orangecyberdefense.com/gui/search?query_hash=bd996290ce004b923c37bfa9705fd671
-   ```
+With this search, the associated query hash is shown in the url:
 
-   The hash `bd996290ce004b923c37bfa9705fd671` uniquely identifies your saved search.
-   
-   After retrieving the query hash, we can configure the connector to use it.
-   Inside the datalake_misp_integration folder, copy the `template_queries.json` file:
+```url
+https://datalake.cert.orangecyberdefense.com/gui/search?query_hash=b1da1c26f2f4e89d38fbf3939b965538
+```
 
-   ```shell
-   cp template_queries.json queries.json
-   ```
+The hash `b1da1c26f2f4e89d38fbf3939b965538` uniquely identifies your saved search.
 
-   Then, we can manually modify `queries.json` to set our query hash like so:
+After retrieving the query hash, we can configure the connector to use it.
+Inside the datalake_misp_integration folder, copy the `template_queries.json` file:
 
-   ```json
-   {
-     "queries": [
-       {
-         "query_hash": "bd996290ce004b923c37bfa9705fd671",
-         "frequency": "6h"
-       },
-       {
-         "query_hash": "<second_query_hash>",
-         "frequency": "<second_frequency>"
-       }
-     ]
-   }
-   ```
-   You may add as many different query hashes as you like.
+```shell
+cp template_queries.json queries.json
+```
 
-   The `frequency` key determines how often each query is executed. Note that queries do not run immediately when the connector starts — the first execution will happen after the specified interval. You can specify frequency in seconds (s), minutes (m), or hours (h)
+Then, we can manually modify `queries.json` to set our query hash like so:
+
+```json
+{
+  "queries": [
+    {
+      "query_hash": "b1da1c26f2f4e89d38fbf3939b965538",
+      "frequency": "6h"
+    },
+    {
+      "query_hash": "<second_query_hash>",
+      "frequency": "<second_frequency>"
+    }
+  ]
+}
+```
+
+You may add as many different query hashes as you like.
+
+The `frequency` key determines how often each query is executed. Note that queries do not run immediately when the connector starts — the first execution will happen after the specified interval. You can specify frequency in seconds (s), minutes (m), or hours (h)
 
 ### 5. **Run the Container**
-   
-   When everything is set up, you may start the connector inside the datalake_misp_integration folder:
-   ```shell
-   docker run --env-file .env -v queries.json:/code/queries.json ocddev/datalake-misp-integration
-   ```
+
+When everything is set up, you may start the connector inside the datalake_misp_integration folder:
+```shell
+docker run --env-file .env -v queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
+```
+
+_Replace `$VERSION` with the version you previously pulled._
 
 ## Verifying the import
 

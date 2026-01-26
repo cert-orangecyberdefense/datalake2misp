@@ -19,33 +19,41 @@ The connector is provided as a [docker image](https://hub.docker.com/r/ocddev/da
 Here is a step by step process to download and run the image:
 
 1. **Pull the Docker Image**
-   Retrieve the latest version of the image by running:
-   ```shell
-   docker pull ocddev/datalake2misp:3.0.0
-   ```
+
+Retrieve [this connector's Docker image from Docker Hub](https://hub.docker.com/r/ocddev/datalake2misp) by running:
+```shell
+docker pull ocddev/datalake2misp:$VERSION
+```
+
+_Replace `$VERSION` with the latest version available._
 
 2. **Configure Environment Variables**
-   Copy the environment template and modify it with your credentials:
-   ```shell
-   cp template.env .env
-   ```
-   Edit the `.env` file to include:
-   - Your Datalake authentication details (either Username & Password OR a Long-Term Token)
-   - Your MISP instance host and API key
+
+Copy the environment template and modify it with your credentials:
+```shell
+cp template.env .env
+```
+Edit the `.env` file to include:
+- Your Datalake authentication details (either Username & Password OR a Long-Term Token)
+- Your MISP instance host and API key
 
 3. **Configure Queries**
-   Copy the query template file and customize it to define your Datalake queries:
-   ```shell
-   cp template_queries.json queries.json
-   ```
-   Modify `queries.json` to add valid Datalake query hashes following the template's structure. For details on creating custom query hashes, refer to the Datalake documentation.
-   The `frequency` key determines how often queries are executed. The first query execution doesn't trigger when the connector starts, so to test ingestion quickly, set `frequency` to a small value.
+
+Copy the query template file and customize it to define your Datalake queries:
+```shell
+cp template_queries.json queries.json
+```
+Modify `queries.json` to add valid Datalake query hashes following the template's structure. For details on creating custom query hashes, refer to the Datalake documentation.
+The `frequency` key determines how often queries are executed. The first query execution doesn't trigger when the connector starts, so to test ingestion quickly, set `frequency` to a small value.
 
 4. **Run the Container**
-   Start the connector using the following command:
-   ```shell
-   docker run --env-file .env -v ./queries.json:/code/queries.json ocddev/datalake2misp:3.0.0
-   ```
+
+Start the connector using the following command:
+```shell
+docker run --env-file .env -v queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
+```
+
+_Replace `$VERSION` with the version you previously pulled._
 
 ## Stopping the container
 
