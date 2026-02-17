@@ -100,10 +100,10 @@ This step determines which IOCs will be transferred from Datalake to MISP. For o
 With this search, the associated query hash is shown in the url:
 
 ```url
-https://datalake.cert.orangecyberdefense.com/gui/search?query_hash=b1da1c26f2f4e89d38fbf3939b965538
+https://datalake.cert.orangecyberdefense.com/gui/search?query_hash=ba29f34bc996b6a308c36e07b4fe8213
 ```
 
-The hash `b1da1c26f2f4e89d38fbf3939b965538` uniquely identifies your saved search.
+The hash `ba29f34bc996b6a308c36e07b4fe8213` uniquely identifies your saved search.
 
 After retrieving the query hash, we can configure the connector to use it.
 Inside the datalake_misp_integration folder, copy the `template_queries.json` file:
@@ -118,7 +118,7 @@ Then, we can manually modify `queries.json` to set our query hash like so:
 {
   "queries": [
     {
-      "query_hash": "b1da1c26f2f4e89d38fbf3939b965538",
+      "query_hash": "ba29f34bc996b6a308c36e07b4fe8213",
       "frequency": "6h"
     },
     {
