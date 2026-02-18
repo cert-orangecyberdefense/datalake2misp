@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster
+FROM python:3.14-slim
 
 # System deps:
 RUN apt-get update \
@@ -12,7 +12,7 @@ USER pythonuser
 
 WORKDIR /code
 
-ADD ./requirements.txt /code/requirements.txt
+COPY docker/local_misp_connector/requirements.txt /code/requirements.txt
 
 RUN pip install --upgrade pip
 RUN pip install --no-warn-script-location -r requirements.txt
