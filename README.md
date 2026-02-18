@@ -50,7 +50,7 @@ The `frequency` key determines how often queries are executed. The first query e
 
 Start the connector using the following command:
 ```shell
-docker run --env-file .env -v queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
+docker run --env-file .env -v ./queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
 ```
 
 _Replace `$VERSION` with the version you previously pulled._

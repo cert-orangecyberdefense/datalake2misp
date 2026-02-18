@@ -137,7 +137,7 @@ The `frequency` key determines how often each query is executed. Note that queri
 
 When everything is set up, you may start the connector inside the datalake_misp_integration folder:
 ```shell
-docker run --env-file .env -v queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
+docker run --env-file .env -v ./queries.json:/code/queries.json ocddev/datalake2misp:$VERSION
 ```
 
 _Replace `$VERSION` with the version you previously pulled._
